@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Daftar Pembelian</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+</head>
+<body>
+    <div th:fragment="content" ng-controller="PembelianFormController">
+        <form class="form-horizontal" name="formEdit">
+            <div class="col-sm-7 well-large">
+                <fieldset>
+                    <legend>Form Header</legend>
+                    <ul>
+                        <div class="form-group" ng-class="{error: formEdit.nopo.$invalid}">
+                            <label class="control-label col-sm-3" for="nopo">No.PO &nbsp; : </label>
+                            <div class="col-sm-2">                     
+                                <input class="form-control" id="nopo" type="text" name="nopo" placeholder="No.Pembelian" ng-model="pembelian.nopo" ng-required="true"/>
+                            </div>
+                            <span ng-show="formEdit.nopo.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                        </div>
+                        <div class="form-group" ng-class="{error: formEdit.tgl.$invalid}">
+                            <label class="control-label col-sm-3" for="tgl">Tanggal &nbsp; :</label>
+                            <div class="col-sm-3"> 
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="tgl" name="tgl" placeholder="dd-mm-yyyy" uib-datepicker-popup="dd-MM-yyyy" 
+                                           ng-model="pembelian.tgl" is-open="statusTgl.opened" datepicker-options="dateOptions" 
+                                           ng-required="true" close-text="Close"/> 
+                                    <span class="input-group-btn">
+                                        <a class="btn btn-info input-sm" ng-click="openTgl($event)"><i class="glyphicon glyphicon-calendar"></i></a>
+                                    </span>
+                                </div>
+                            </div>
+                            <span ng-show="formEdit.tgl.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                        </div>
+                        <div class="form-group" ng-class="{error: formEdit.kdsupplier.$invalid}">
+                            <label class="control-label col-sm-3" for="kdsupplier">Kode Supplier &nbsp; : </label>
+                            <div class="col-sm-3">   
+                                 <div class="input-group">
+                                    <input type="text" class="form-control text-uppercase" id="kdsupplier" name="kdsupplier" placeholder="Kode Supplier" 
+                                           ng-model="kdsupplier" ng-keyup="KeyCekSupplier($event)" ng-required="true"/>
+                                    <span class="input-group-btn">
+                                        <a class="btn btn-info" ng-click="BrowseSupplier()">F2</a>
+                                    </span>
+                                 </div>
+                            </div>
+                            <span ng-show="formEdit.kdsupplier.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            <span ng-show="kdSupAvailable" class="help-block col-sm-5">Kode SUPPLIER Tidak Ada, Masukkan Kode yang Lain..</span>
+                            <span ng-show="nmsupplier" class="help-block col-sm-5">{{nmsupplier}}</span> 
+                        </div>
+                        <div class="form-group" ng-class="{error: formEdit.idsupplier.$invalid}">
+                            <input type="text" name="idsupplier" ng-model="pembelian.idsupplier" required="true" hidden="true"/>
+                        </div>    
+                    </ul>
+                </fieldset>
+            </div>       
+            
+            <div class="col-lg-11 well-large">
+                <fieldset>
+                    <legend>Form Detail</legend>
+                    <ul>
+                        <table class="table table-striped table-bordered table-condensed" style="font-size: 14px;">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 2%">No</th>
+                                    <th class="text-center" style="width: 3%">Kode Item</th>
+                                    <th class="text-center">Nama Item</th>
+                                    <th class="text-center" style="width: 5%">Qty</th>
+                                    <th class="text-center" style="width: 5%">Harga</th>
+                                    <th class="text-center" style="width: 8%">Pph</th>
+                                    <th class="text-center" style="width: 8%">Bph</th>
+                                    <th class="text-center" style="width: 8%">Ppn Transport</th>
+                                    <th class="text-center" style="width: 8%">Pph 22</th>
+                                    <th class="text-center" style="width: 8%">Jumlah</th>
+                                    <th style="width: 13%">
+                                        <a class="btn btn-info" ng-click="addDetail()" data-toggle="modal" data-target="#dialogDetail">
+                                            <i class="glyphicon glyphicon-plus-sign"></i> Add  
+                                        </a>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="dtl in dataDetail">
+                                    <td class="text-right">{{$index + 1}}</td>
+                                    <td class="text-center">{{dtl.kditem}}</td>
+                                    <td>{{dtl.nmitem}}</td>
+                                    <td class="text-center">{{dtl.qty | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.harga | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.pph | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.bph | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.ppntrans | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.pph22 | currency:"":0}}</td> 
+                                    <td class="text-right">{{dtl.jumlah | currency:"":0}}</td> 
+                                    <td class="text-center">
+                                        <a class="btn btn-default btn-xs" ng-click="editDetail(dtl)" data-toggle="modal" data-target="#dialogDetail">
+                                            <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                                        </a>
+                                        &nbsp; 
+                                        <a class="btn btn-default btn-xs" ng-click="delDetail(dtl)">
+                                           <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;Hapus
+                                        </a>
+                                    </td>
+                                </tr> 
+                            </tbody>
+                        </table>
+                        <div class="col-sm-pull-8">
+                            <uib-pagination total-items="bigTotalItems" ng-model="CurrentPage" max-size="maxSize" class="pagination-sm" 
+                                boundary-links="true" rotate="false" num-pages="totalItems" ng-change="reloadPembelianpage()">
+                            </uib-pagination>
+                        </div>
+                    </ul>
+                </fieldset>
+                <div class="form-group">     
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <a data-toggle="modal" class="btn btn-primary" ng-click="simpanPembelian()">Simpan</a>
+                        <button type="button" class="btn btn-default"  data-dismiss="modal" ng-click="batal()">Batal</button>
+                    </div>
+                </div>
+            </div>
+        </form>    
+        
+        <div class="modal fade" id="dialogSimpan" data-backdrop="static" data-keyboard="true" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">     
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> x</button>
+                        <h3>   Konfirmasi</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div style="font-size:18px"> 
+                            <span class="glyphicon glyphicon-warning-sign" style="font-size:30px;" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Benar Data Harga Pembelian akan di Simpan...?
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                        <button type="submit" class="btn btn-primary" ng-click="simpanPembelian()"> Ya Simpan </button>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        
+        <div class="modal fade" id="dialogDetail" data-keyboard="false">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h3 class="modal-title" id="menuModalLabel"> &nbsp; &nbsp; Form Detail Pembelian</h3>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" name="formDetail">
+                            <input type="text" name="iditem" ng-model="iditem" hidden="true"/>
+                            <div class="form-group" ng-class="{error: formDetail.kditem.$invalid}">
+                                <label class="control-label col-sm-3" for="kditem">Kode ITEM &nbsp; : </label>
+                                <div class="col-sm-3">
+                                    <div class="input-group">
+                                        <input class="form-control text-uppercase" id="kditem" type="text" name="kditem" placeholder="" ng-model="kditem" 
+                                                ng-keyup="KeyCekItem($event)" ng-required="true"/>
+                                        <div class="input-group-btn">                                
+                                            <a class="btn btn-info" ng-click="BrowseItem()">F5</a>
+                                        </div>   
+                                    </div>
+                                </div>
+                                <span ng-show="formDetail.kditem.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                                <span ng-show="kdItemAvailable" class="help-block col-sm-5">Kode ITEM Tidak Ada, Masukkan Kode yang Lain..</span>
+                            </div>
+                            <div class="form-group" ng-class="{error: formDetail.nmitem.$invalid}">
+                                <label class="control-label col-sm-3" for="nmitem">Nama ITEM &nbsp; : </label>
+                                <div class="col-sm-7"> 
+                                    <input class="form-control" readonly="true" type="text" name="nmitem" ng-model="nmitem" required="true"/>
+                                </div>    
+                            </div>    
+                            <div class="form-group" ng-class="{error: formDetail.qty.$invalid}">
+                                <label class="control-label col-sm-3" for="qty">Qty &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" id="qty" name="qty" ng-model="qty" ng-keypress="KeyNumber($event)" ng-required="true"/>
+                                </div>    
+                                <span ng-show="formDetail.qty.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            </div>
+                            <div class="form-group" ng-class="{error: formDetail.harga.$invalid}">
+                                <label class="control-label col-sm-3" for="harga">Harga &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" name="harga" ng-model="harga" ng-keypress="KeyNumber($event)" ng-required="true"/>
+                                </div>    
+                                <span ng-show="formDetail.harga.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            </div>
+                            <div class="form-group" ng-class="{error: formDetail.pph.$invalid}">
+                                <label class="control-label col-sm-3" for="pph">Pph &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" name="pph" ng-model="pph" ng-keypress="KeyNumber($event)" ng-required="true"/>
+                                </div>    
+                                <span ng-show="formDetail.pph.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="bph">Bph &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" name="bph" ng-keypress="KeyNumber($event)" ng-model="bph"/>
+                                </div>    
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="ppntrans">Ppn Transport &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" name="ppntrans" ng-keypress="KeyNumber($event)" ng-model="ppntrans"/>
+                                </div>    
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="pph22">Pph 22 &nbsp; : </label>
+                                <div class="col-sm-3"> 
+                                    <input class="form-control" type="text" name="pph22" ng-keypress="KeyNumber($event)" ng-model="pph22"/>
+                                </div>    
+                            </div>
+                        </form>    
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" ng-click="saveDetail()" ng-disabled="formDetail.$invalid">
+                            <i class="glyphicon glyphicon-floppy-disk"> Simpan </i> 
+                        </button>
+                        <a class="btn btn-default" data-dismiss="modal">
+                            <i class="glyphicon glyphicon-log-out"> Tutup </i> 
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>    
+
+        <div class="modal" id="dialogItem" data-backdrop="static" data-keyboard="true" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">     
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> x</button>
+                        <h3>   List ITEM</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-default input-sm"><i class="glyphicon glyphicon-search"></i></a>
+                                </span>    
+                                <input type="text" class="form-control input-sm" ng-model="searchText" placeholder="Pencarian..."/>
+                            </div>    
+                        </div>
+                        <table class="table table-striped table-bordered table-condensed" style="font-size: 14px;" >
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 75%">Nama Item</th>
+                                    <th class="text-center" style="width: 13%">Kode Item</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in dataItem.content | orderBy:'-item':'false'|  filter:searchText ">
+                                    <td>{{item.nmitem}}</td>
+                                    <td class="text-center">
+                                        {{item.kditem}}&nbsp;&nbsp;<input type="radio" name="optitem" ng-click="selectItem(item)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-default" data-dismiss="modal">Tutup</a>
+                        <a class="btn btn-primary" ng-click="selectItemOk()"> OK </a>
+                    </div>
+                </div>
+            </div>    
+        </div>
+
+        <div class="modal" id="dialogSupplier" data-backdrop="static" data-keyboard="true" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">     
+                    <div class="modal-header">
+                        <a class="close" data-dismiss="modal" aria-hidden="true"> x</a>
+                        <h3>   List SUPPLIER</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-sm-6">
+                            <div class="input-group">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-default input-sm"><i class="glyphicon glyphicon-search"></i></a>
+                                </span>    
+                                <input type="text" class="form-control input-sm" ng-model="searchText" placeholder="Pencarian..."/>
+                            </div>    
+                        </div>
+                        <table class="table table-striped table-bordered table-condensed" style="font-size: 14px;" >
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Nama Supplier</th>
+                                    <th class="text-center" style="width: 20%;">Kota</th>
+                                    <th class="text-center" style="width: 15%;">Contact Person</th>
+                                    <th class="text-center" style="width: 18%;">Telephone</th>
+                                    <th class="text-center" style="width: 10%;">Kode Supplier</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="supplier in dataSupplier.content | orderBy:'-nmsupplier':'false'|  filter:searchText ">
+                                    <td>{{supplier.nmsupplier}}</td>
+                                    <td>{{supplier.kota}}</td>
+                                    <td>{{supplier.cperson}}</td>
+                                    <td>{{supplier.tlp}}</td>
+                                    <td class="text-center">
+                                        {{supplier.kdsupplier}}&nbsp;&nbsp;<input type="radio" name="optsupplier" ng-click="selectSupplier(supplier)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <a class="btn btn-default" data-dismiss="modal">Tutup</a>
+                        <a class="btn btn-primary" ng-click="selectSupplierOk()"> OK </a>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    </div>
+</body>
+</html>

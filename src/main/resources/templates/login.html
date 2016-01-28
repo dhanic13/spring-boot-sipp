@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <title>Login Page</title>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        
+        <!-- Bootstrap core CSS  -->
+        <link href="css/bootstrap.min-3.3.6.css" rel="stylesheet"/> 
+
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet"/>
+
+        <!-- Custom styles for this template -->
+        <link href="css/signin.css" rel="stylesheet"/>
+        <link rel="icon" href="../images/favicon.ico" />    
+    </head>
+    <body>
+        <div class="container">
+            <h2 class="form-signin-heading" align="center">Please Sign In</h2>
+
+            <form class="form-signin" name="f" th:action="@{/login}" method="post">
+                <div th:if="${param.error}" class="alert alert-error">    
+                        Invalid username and password.
+                </div>
+                <div th:if="${param.logout}" class="alert alert-success"> 
+                        You have been logged out.
+                </div>
+                <label for="username" class="sr-only">User Name</label>
+                <input type="text" name="username" class="form-control" placeholder="User Name" required="true" autofocus="true"/>
+                
+                <label for="password" class="sr-only">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" required="true"/>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </form>
+        </div> 
+
+        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+        <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+        <script src="js/ie-emulation-modes-warning.js"></script>
+        
+        <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+        <script src="js/ie10-viewport-bug-workaround.js"></script>
+    </body>
+</html>

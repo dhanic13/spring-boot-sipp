@@ -1,0 +1,270 @@
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" 
+		   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" 
+		   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext 
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd 
+                                       http://www.liquibase.org/xml/ns/dbchangelog 
+                                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+				   
+    <changeSet author="root" id="1">
+        <!-- Tabel Master  -->
+        <createTable tableName="mst_customer">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kdcustomer" type="CHAR(5)"/>
+            <column name="customer" type="VARCHAR(35)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="alamat" type="VARCHAR(250)"/>
+            <column defaultValue="" name="kota" type="VARCHAR(35)"/>
+            <column defaultValue="" name="cperson" type="VARCHAR(35)"/>
+            <column defaultValue="" name="tlp" type="VARCHAR(25)"/>
+            <column defaultValueNumeric="0" name="pbbkb" type="DECIMAL(4,2)"/>
+        </createTable>
+        <createTable tableName="mst_item">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kditem" type="CHAR(5)"/>
+            <column name="nmitem" type="VARCHAR(50)"/>
+        </createTable>
+        <createTable tableName="mst_bank">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kdbank" type="CHAR(5)"/>
+            <column name="nmbank" type="VARCHAR(50)"/>
+        </createTable>
+        <createTable tableName="mst_supplier">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="kdsupplier" type="CHAR(5)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nmsupplier" type="VARCHAR(35)"/>
+            <column defaultValue="" name="alamat" type="VARCHAR(250)"/>
+            <column defaultValue="" name="kota" type="VARCHAR(30)"/>
+            <column defaultValue="" name="cperson" type="VARCHAR(20)"/>
+            <column defaultValue="" name="tlp" type="VARCHAR(25)"/>
+        </createTable>
+        <createTable tableName="mst_pertamina">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tgl" type="date"/>
+            <column name="tglakhir" type="date"/>
+            <column defaultValue="0.0" name="harga" type="DECIMAL(5,0)"/>
+            <column name="iditem" type="VARCHAR(50)"/>
+        </createTable>
+        
+        <!-- Tabel Transaksi  -->
+        <createTable tableName="trs_pembelian">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="nopo" type="CHAR(30)"/>
+            <column name="tgl" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0.0" name="ppn" type="DECIMAL(10,2)"/>
+            <column defaultValueNumeric="0.0" name="pbbkb" type="DECIMAL(10,2)"/>
+            <column name="idsupplier" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="trs_pembeliandetail">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>    
+            <column name="idpo" type="VARCHAR(50)"/>
+            <column name="iditem" type="VARCHAR(50)"/>
+            <column name="qty" type="DECIMAL(5,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="harga" type="DECIMAL(5,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0.0" name="bph" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="pph" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="ppntrans" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="pph22" type="DECIMAL(9,2)"/>
+        </createTable>
+        <createTable tableName="trs_penjualan">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="noso" type="CHAR(30)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="socust" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tgl" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="idcustomer" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="2" name="stsbayar" remarks="1. Tunai   2. Kredit (Term)" type="CHAR(1)"/>
+            <column defaultValueNumeric="0.0" name="ppn" type="DECIMAL(10,2)"/>
+            <column defaultValueNumeric="0.0" name="pbbkb" type="DECIMAL(10,2)"/>
+            <column defaultValueNumeric="0.0" name="total" type="DECIMAL(10,2)"/>
+        </createTable>
+        <createTable tableName="trs_penjualandetail">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="idso" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="iditem" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="qty" type="DECIMAL(5,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="harga" type="DECIMAL(5,0)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0.0" name="bph" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="pph" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="ppntrans" type="DECIMAL(9,2)"/>
+            <column defaultValueNumeric="0.0" name="pph22" type="DECIMAL(9,2)"/>
+        </createTable>
+        <createTable tableName="trs_invoiceso">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="idso" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="noinvoice" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tgl" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0.0" name="total" type="DECIMAL"/>
+            <column defaultValueNumeric="0.0" name="bayar" type="DECIMAL"/>
+            <column defaultValue="2" name="stsbayar" remarks="1. Tunai   2. Kredit (Term)" type="CHAR(1)"/>
+        </createTable>
+        <createTable tableName="trs_pembayaranso">
+            <column name="id" type="VARCHAR(50)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="idinvoice" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nopembayaran" type="VARCHAR(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tgl" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="idbank" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValue="" name="note" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0.0" name="bayar" type="DECIMAL(10,2)"/>
+        </createTable>
+        
+        <!-- Tabel System  -->
+        <createTable tableName="c_security_user">
+            <column name="id" type="char(15)">
+                <constraints primaryKey="true" nullable="false" />
+            </column>
+            <column name="username" type="char(15)">
+                <constraints nullable="false" />
+            </column>
+            <column name="password" type="varchar(20)">
+                <constraints nullable="false" />
+            </column>
+            <column name="fullname" type="varchar(35)" />
+            <column name="active" type="boolean" />
+            <!--
+            <column name="id_role" type="varchar(15)">
+                <constraints nullable="false" />
+            </column> -->
+            <column name="photo" type="varchar(255)" />
+        </createTable>
+        
+    </changeSet>
+        
+    <changeSet author="root" id="2">
+        <!-- Unique Tabel Master  -->
+	<addUniqueConstraint
+            constraintName="unique_kdcustomer"
+            columnNames="kdcustomer"
+            tableName="mst_customer"
+        />
+	<addUniqueConstraint
+            constraintName="unique_kditem"
+            columnNames="kditem"
+            tableName="mst_item"
+        />
+	<addUniqueConstraint
+            constraintName="unique_pertamina"
+            columnNames="tgl"
+            tableName="mst_pertamina"
+        />
+        <addUniqueConstraint
+            constraintName="unique_supplier"
+            columnNames="kdsupplier"
+            tableName="mst_supplier"
+        />
+        
+        <!-- Unique Tabel Transaksi  -->
+        <addUniqueConstraint
+            constraintName="unique_nopo"
+            columnNames="nopo"
+            tableName="trs_pembelian"
+        />
+        <addUniqueConstraint
+            constraintName="unique_idpo_iditem"
+            columnNames="idpo,iditem"
+            tableName="trs_pembeliandetail"
+        /> 
+        <addUniqueConstraint
+            constraintName="unique_noso"
+            columnNames="noso"
+            tableName="trs_penjualan"
+        />
+        <addUniqueConstraint
+            constraintName="unique_idso_iditem"
+            columnNames="idso,iditem"
+            tableName="trs_penjualandetail"
+        /> 
+        <addUniqueConstraint
+            constraintName="unique_noinvoice"
+            columnNames="noinvoice"
+            tableName="trs_invoiceso"
+        />
+        <addUniqueConstraint
+            constraintName="unique_nopembayaran"
+            columnNames="nopembayaran"
+            tableName="trs_pembayaranso"
+        />
+        
+        
+        <!-- Unique Tabel System  -->
+        <addUniqueConstraint
+            constraintName="unique_username"
+            columnNames="username"
+            tableName="c_security_user"
+        />
+        <!--
+        <addForeignKeyConstraint
+            constraintName="fk_user_role"
+            baseColumnNames="id_role"
+            baseTableName="c_security_user"
+            referencedTableName="s_role"
+            referencedColumnNames="id"
+        /> -->
+        
+        
+    </changeSet>
+    
+</databaseChangeLog>

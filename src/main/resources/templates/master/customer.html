@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Daftar Customer</title>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    
+</head>
+<body>
+    <div class="content" th:fragment="content" ng-controller="CustomerController">
+        <div class="modal fade" id="dialogCustomer" data-keyboard="false">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+                        <h3 class="modal-title" id="menuModalLabel"> &nbsp; &nbsp; Form Customer</h3>
+                    </div>
+                    <div class="modal-body">
+                        <form class="form-horizontal" name="formEdit">    
+                            <div class="form-group" ng-class="{error: formEdit.kdcustomer.$invalid}">
+                                <label class="control-label col-sm-3" for="kdcustomer">Kode &nbsp; :</label>
+                                <div class="col-sm-3">                     
+                                    <input class="form-control text-uppercase" type="text" name="kdcustomer" ng-change="customer.kdcustomer=customer.kdcustomer.toUpperCase();" 
+                                           placeholder="Kode Customer" autofocus="true" ng-model-options="{ debounce: 500 }" ng-model="customer.kdcustomer" ng-maxlength="5" 
+                                           required="true" ui-validate="{customerAvailable: 'iscustomerAvailable($value)'}" ui-validate-watch="{customerAvailable: 'hslcek'}"  />
+                                </div> 
+                                <span ng-show="formEdit.kdcustomer.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                                <span ng-show="formEdit.kdcustomer.$error.customerAvailable" class="help-block col-sm-5">Kode sudah di gunakan, Masukkan Kode yang Lain..</span>
+                                <span ng-show="formEdit.kdcustomer.$error.maxlength" class="help-block col-sm-3">Panjang Kode Maximal 5 Digit</span>
+                            </div>
+                            <div class="form-group" ng-class="{error: formEdit.customer.$invalid}">
+                                <label class="control-label col-sm-3" for="customer">Nama &nbsp; :</label>
+                                <div class="col-sm-6">                     
+                                    <input class="form-control text-uppercase" type="text" name="customer" ng-change="customer.customer=customer.customer.toUpperCase();" placeholder="Nama Customer" ng-model="customer.customer" required="true"/>
+                                </div>
+                                <span ng-show="formEdit.customer.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="alamat">Alamat &nbsp; :</label>
+                                <div class="col-sm-6">                     
+                                    <textarea class="form-control" rows="2" type="text" name="alamat" placeholder="Alamat" ng-model="customer.alamat"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="kota">Kota &nbsp; :</label>
+                                <div class="col-sm-6">                     
+                                    <input class="form-control text-uppercase" type="text" name="kota" ng-change="customer.kota=customer.kota.toUpperCase();" placeholder="Kota" ng-model="customer.kota"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="cperson">Contact Person &nbsp; :</label>
+                                <div class="col-sm-6">                     
+                                    <input class="form-control text-uppercase" type="text" name="cperson" ng-change="customer.cperson=customer.cperson.toUpperCase();" placeholder="Contact Person" ng-model="customer.cperson"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="tlp">Telephone &nbsp; : </label>
+                                <div class="col-sm-6">                     
+                                    <input class="form-control" type="text" name="tlp" placeholder="Telephone" ng-model="customer.tlp"/>
+                                </div>
+                            </div>
+                            <div class="form-group" ng-class="{error: formEdit.pbbkb.$invalid}">
+                                <label class="control-label col-sm-3" for="pbbkb">PBBKB (%) &nbsp; : </label>
+                                <div class="col-sm-2">                     
+                                    <input class="form-control"  type="text" name="pbbkb" placeholder="Nilai PBBKB" ng-model="customer.pbbkb" ng-keypress="filterValue($event)" required="true"/>
+                                </div>
+                                <span ng-show="formEdit.pbbkb.$error.required" class="help-block col-sm-2">Harus diisi</span>
+                            </div>
+                            <div class="form-group">     
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <a data-toggle="modal" class="btn btn-primary" ng-disabled="formEdit.$invalid" data-target="#dialogSimpan">Simpan</a>
+                                    <button type="button" class="btn btn-default" ng-click="batal()">Batal</button>
+                                </div>
+                            </div>    
+                        </form>    
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="dialogSimpan" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">     
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> x</button>
+                        <h3>   Konfirmasi</h3>
+                    </div>
+                    <div class="modal-body">
+                        <div style="font-size:18px"> 
+                            <span class="glyphicon glyphicon-warning-sign" style="font-size:30px;" aria-hidden="true"></span>
+                            <span class="sr-only">Error:</span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Benar Data Customer akan di Simpan...?
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                        <button type="submit" class="btn btn-primary" ng-click="simpanCustomer()"> Ya Simpan </button>
+                    </div>
+                </div>
+            </div>    
+        </div>
+        
+        <div class="modal" id="dialogHapus" data-backdrop="static">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                       <button type="button" class="close" data-dismiss="modal" aria-hidden="true"> x</button>
+                       <h4 class="modal-title">Konfirmasi</h4>
+                    </div>
+                    <div class="container"></div>
+                    <div class="modal-body">
+                        <div style="font-size:18px">
+                            <span class="glyphicon glyphicon-warning-sign" style="font-size:25px;" aria-hidden="true"></span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Benar Data Customer akan di Hapus...?
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                       <button type="button" class="btn btn-default" data-dismiss="modal">Tidak</button>
+                       <button type="button" class="btn btn-primary" ng-click="hapusCustomer()"> Ya Hapus </button>
+                    </div>
+              </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="col-md-12 well-large">
+                <h3 style="text-align: center;">DAFTAR CUSTOMER</h3>
+                <hr/>
+                <div class="btn-group">
+                    <span class="btn-group">
+                        <a class="btn btn-info" ng-click="baru()" data-toggle="modal" data-target="#dialogCustomer">
+                            <i class="glyphicon glyphicon-plus-sign"></i> Tambah Data
+                        </a> 
+                    </span>
+                </div>    
+                <div class="btn-group">
+                    <span class="btn-group">
+                        <div class="col-sm-pull-6">
+                            <input type="text" class="form-control" ng-model="searchText" placeholder="Pencarian..."/>
+                        </div>
+                    </span>
+                </div>
+                
+                <div class="btn-group">
+                    <div class="col-sm-pull-6">
+                        <uib-pagination total-items="bigTotalItems" ng-model="CurrentPage" max-size="maxSize" class="pagination-sm" 
+                                        boundary-links="true" rotate="false" num-pages="totalItems" ng-change="reloadCustomerpage()"></uib-pagination>
+                    </div>
+                </div>    
+
+                <table class="table table-striped table-bordered table-condensed" style="font-size: 14px;" >
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 3%">No</th>
+                            <th class="text-center" style="width: 7%">Kode Customer</th>
+                            <th class="text-center">Nama Customer</th>
+                            <th class="text-center">Alamat</th>
+                            <th class="text-center">Kota</th>
+                            <th class="text-center" style="width: 11%">Contact Person</th>
+                            <th class="text-center">Telephone</th>
+                            <th class="text-center" style="width: 5%">PBBKB (%)</th>
+                            <th style="width: 13%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="c in dataCustomer.content | orderBy:'-customer':true| filter:searchText ">
+                            <td class="text-right">{{$index + (dataCustomer.number * 10) + 1}}</td>
+                            <td>{{c.kdcustomer}}</td>
+                            <td>{{c.customer}}</td>
+                            <td>{{c.alamat}}</td>
+                            <td>{{c.kota}}</td>
+                            <td>{{c.cperson}}</td>
+                            <td>{{c.tlp}}</td>
+                            <td class="text-center">{{c.pbbkb}}</td>
+                            <td style="text-align: center;">
+                                <button type="button" class="btn btn-default btn-xs" ng-click="editCustomer(c)" data-toggle="modal" data-target="#dialogCustomer">
+                                    <span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit
+                                </button>
+                                &nbsp; 
+                                <button type="button" class="btn btn-default btn-xs" ng-click="DelPos(c)" data-toggle="modal" data-target="#dialogHapus">
+                                   <span class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;Hapus
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>    
+    </div>    
+</body>
+</html>

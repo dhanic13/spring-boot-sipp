@@ -62,7 +62,7 @@ public class Pembelian {
     @JoinColumn(name = "idsupplier", nullable = false)
     private Supplier supplier;
     
-    @JsonIgnore
+    @JsonManagedReference
     @OneToMany(mappedBy = "pembelian", cascade = CascadeType.ALL)
     private List<PembelianDetail> detailPembelian = new ArrayList<>();
 

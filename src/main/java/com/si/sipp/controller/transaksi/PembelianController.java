@@ -58,10 +58,10 @@ public class PembelianController {
         pembelianDao.delete(id);
     }
     
-    @RequestMapping(value="/pembelian_form", method = RequestMethod.POST)
+    @RequestMapping(value="/pembelian_form", method = RequestMethod.POST, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, 
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public void addPembelian(@RequestBody @Valid Pembelian pembelian){
-        /*
+    @ResponseBody public void addPembelian(@RequestBody @Valid Pembelian pembelian){
         Pembelian m = new Pembelian();
         m.setNopo(pembelian.getNopo());
         m.setTgl(pembelian.getTgl());
@@ -71,13 +71,14 @@ public class PembelianController {
         for(PembelianDetail detail : pembelian.getDetailPembelian()) {
             detail.setPembelian(m);
             m.getDetailPembelian().add(detail); 
-        } */ 
-        pembelianDao.save(pembelian);
+        } 
+        pembelianDao.save(m);
     }
     
-    @RequestMapping(value="/pembelian_form/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value="/pembelian_form/{id}", method = RequestMethod.PUT, method = RequestMethod.POST, method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, 
+                    produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public void updatePembelian(@PathVariable("id") String id, @RequestBody @Valid Pembelian data){
+    @ResponseBody public void updatePembelian(@PathVariable("id") String id, @RequestBody @Valid Pembelian data){
         data.setId(id);
         /*
         Pembelian m = new Pembelian();

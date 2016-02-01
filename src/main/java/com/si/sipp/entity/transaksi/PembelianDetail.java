@@ -30,6 +30,7 @@ public class PembelianDetail  {
     @GenericGenerator(name = "system-uuid", strategy = "uuid2")
     private String id;
     
+	@JsonBackReference
     @ManyToOne
     @JoinColumn(name="idpo", nullable = false, insertable = true, updatable = true)
     private Pembelian pembelian;
